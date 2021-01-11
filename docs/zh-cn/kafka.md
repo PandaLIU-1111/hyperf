@@ -135,7 +135,8 @@ namespace App\kafka;
 
 use Hyperf\Kafka\AbstractConsumer;
 use Hyperf\Kafka\Annotation\Consumer;
-use Hyperf\Kafka\Result;use longlang\phpkafka\Consumer\ConsumeMessage;
+use Hyperf\Kafka\Result;
+use longlang\phpkafka\Consumer\ConsumeMessage;
 
 /**
  * @Consumer(topic="hyperf", nums=5, groupId="hyperf", autoCommit=true)
