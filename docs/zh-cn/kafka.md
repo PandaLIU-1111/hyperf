@@ -104,7 +104,7 @@ return [
 通过 gen:kafka-consumer 命令可以快速的生成一个 消费者(Consumer) 对消息进行消费。
 
 ```bash
-php bin/hyperf.php gen:kafka-consumer KafkaConsumer`
+php bin/hyperf.php gen:kafka-consumer KafkaConsumer
 ```
 
 您也可以通过使用 `Hyperf\Kafka\Annotation\Consumer` 注解来对一个 `Hyperf/Kafka/AbstractConsumer` 抽象类的子类进行声明，来完成一个 `消费者(Consumer)` 的定义，其中 `Hyperf\Kafka\Annotation\Consumer` 注解和抽象类均包含以下属性：
@@ -118,7 +118,6 @@ php bin/hyperf.php gen:kafka-consumer KafkaConsumer`
 |   name  | string | KafkaConsumer |  消费者的名称     |
 |   nums  |  int   |   1    |  消费者的进程数   |
 |   pool  | string |   default   |  消费者对应的连接，对应配置文件的 key |
-
 
 ```php
 <?php
@@ -136,7 +135,7 @@ namespace App\kafka;
 
 use Hyperf\Kafka\AbstractConsumer;
 use Hyperf\Kafka\Annotation\Consumer;
-use longlang\phpkafka\Consumer\ConsumeMessage;
+use Hyperf\Kafka\Result;use longlang\phpkafka\Consumer\ConsumeMessage;
 
 /**
  * @Consumer(topic="hyperf", nums=5, groupId="hyperf", autoCommit=true)
@@ -146,6 +145,7 @@ class KafkaConsumer extends AbstractConsumer
     public function consume(ConsumeMessage $message): string
     {
         var_dump($message->getTopic() . ':' . $message->getKey() . ':' . $message->getValue());
+        return Result::ACK;
     }
 }
 
