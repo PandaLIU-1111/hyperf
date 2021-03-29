@@ -50,6 +50,11 @@ abstract class AbstractConsumer
      */
     public $autoCommit = true;
 
+    /**
+     * @var null|callable
+     */
+    public $callable = null;
+
     public function getPool(): string
     {
         return $this->pool;
@@ -118,6 +123,22 @@ abstract class AbstractConsumer
     public function setName(string $name): void
     {
         $this->name = $name;
+    }
+
+    /**
+     * @return callable|null
+     */
+    public function getCallable(): ?callable
+    {
+        return $this->callable;
+    }
+
+    /**
+     * @param callable|null $callable
+     */
+    public function setCallable(?callable $callable): void
+    {
+        $this->callable = $callable;
     }
 
     /**

@@ -65,6 +65,7 @@ class ConsumerManager
             $annotation->topic && $instance->setTopic($annotation->topic);
             $annotation->groupId && $instance->setGroupId($annotation->groupId);
             $annotation->memberId && $instance->setMemberId($annotation->memberId);
+            $annotation->callable && $instance->setCallable($annotation->callable);
             $instance->setAutoCommit($annotation->autoCommit);
 
             $process = $this->createProcess($instance);
@@ -186,6 +187,7 @@ class ConsumerManager
                 $consumerConfig->setOffsetRetry($config['offset_retry']);
                 $consumerConfig->setAutoCreateTopic($config['auto_create_topic']);
                 $consumerConfig->setPartitionAssignmentStrategy($config['partition_assignment_strategy']);
+                ! empty($this->consumer->callable) && $consumerConfig->setExceptionCallback($this->consumer->callable);
                 return $consumerConfig;
             }
         };

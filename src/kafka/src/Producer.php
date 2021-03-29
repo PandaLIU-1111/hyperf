@@ -53,9 +53,9 @@ class Producer
         $this->name = $name;
     }
 
-    public function send(string $topic, ?string $value, ?string $key = null, array $headers = [], ?int $partitionIndex = null): void
+    public function send(string $topic, ?string $value, ?string $key = null, array $headers = [], ?int $partitionIndex = null, ?callable $callable = null): void
     {
-        $this->loop();
+        $this->loop($callable);
         $ack = new Channel();
         $this->chan->push(function () use ($topic, $key, $value, $headers, $partitionIndex, $ack) {
             try {
@@ -92,9 +92,9 @@ class Producer
     /**
      * @param ProduceMessage[] $messages
      */
-    public function sendBatch(array $messages): void
+    public function sendBatch(array $messages, ?callable $callable = null): void
     {
-        $this->loop();
+        $this->loop($callable);
         $ack = new Channel();
         $this->chan->push(function () use ($messages, $ack) {
             try {
@@ -130,15 +130,15 @@ class Producer
         return $this->producer->getBroker();
     }
 
-    protected function loop()
+    protected function loop(?callable $callable = null)
     {
         if ($this->chan != null) {
             return;
         }
         $this->chan = new Channel(1);
-        Coroutine::create(function () {
+        Coroutine::create(function () use ($callable) {
             while (true) {
-                $this->producer = $this->makeProducer();
+                $this->producer = $this->makeProducer($callable);
                 $this->topicsMeta = $this->fetchMeta();
                 while (true) {
                     $closure = $this->chan->pop();
@@ -158,7 +158,7 @@ class Producer
         });
     }
 
-    private function makeProducer(): LongLangProducer
+    private function makeProducer(?callable $callable = null): LongLangProducer
     {
         $config = $this->config->get('kafka.' . $this->name);
         $producerConfig = new ProducerConfig();
@@ -176,6 +176,7 @@ class Producer
         $producerConfig->setProducerEpoch($config['producer_epoch']);
         $producerConfig->setPartitionLeaderEpoch($config['partition_leader_epoch']);
         $producerConfig->setAutoCreateTopic($config['auto_create_topic']);
+        $producerConfig->setExceptionCallback($callable);
         return new LongLangProducer($producerConfig);
     }
 
