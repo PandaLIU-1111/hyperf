@@ -120,6 +120,7 @@ php bin/hyperf.php gen:kafka-consumer KafkaConsumer
 |    name    |       string       |   KafkaConsumer    |             消费者的名称             |
 |    nums    |        int         |         1          |            消费者的进程数            |
 |    pool    |       string       |      default       | 消费者对应的连接，对应配置文件的 key |
+|  callable  |       ?callable    |      null       |  遇到无法在recv()协程抛出的异常时，调用此回调。 |
 
 
 ```php
